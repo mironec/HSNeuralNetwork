@@ -11,7 +11,7 @@ CardStatManager::CardStatManager()
 
 	cardTypes.push_back(new CardType(3, 2, "Bloodfen Raptor", 2)); cardTypes[0]->setTags(CardTag::minion | CardTag::beast);
 	cardTypes.push_back(new CardType(2, 3, "River Crocolisk", 2)); cardTypes[1]->setTags(CardTag::minion | CardTag::beast);
-	cardTypes.push_back(new CardType(0, 0, "The Coin", 0)); cardTypes[2]->setTags(CardTag::spell);
+	cardTypes.push_back(new CardType(0, 0, "The Coin", 0)); cardTypes[2]->setTags(CardTag::spell | CardTag::noTarget);
 }
 
 
@@ -35,6 +35,6 @@ CardType * CardStatManager::getCardType(std::string fromCardName)
 Card * CardStatManager::createDeckCardFromName(std::string fromCardName)
 {
 	CardType * parent = getCardType(fromCardName);
-	Card * child = new Card(parent);
+	Card * child = new Card(parent, -1);
 	return child;
 }

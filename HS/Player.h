@@ -39,9 +39,9 @@ public:
 	~Player();
 	void receiveCommand(const std::shared_ptr<Command> &command);
 	std::vector<Card*> getCardChoices();
-	Hand * getHand();
-	Board * getBoard();
-	Hero * getHero();
+	Hand * getHand() const;
+	Board * getBoard() const;
+	Hero * getHero() const;
 	int8_t getFreeMana();
 	int8_t getMaxMana();
 	void spendMana(int8_t howMuch);

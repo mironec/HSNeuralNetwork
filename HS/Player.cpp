@@ -33,16 +33,16 @@ std::vector<Card*> Player::getCardChoices() {
 	return options;
 }
 
-Hand* Player::getHand() {
+Hand* Player::getHand() const {
 	return hand.get();
 }
 
-Board * Player::getBoard()
+Board * Player::getBoard() const
 {
 	return board.get();
 }
 
-Hero * Player::getHero()
+Hero * Player::getHero() const
 {
 	return hero.get();
 }
@@ -155,17 +155,42 @@ void Player::startTurn() {
 
 void Player::resolvePlay(const std::shared_ptr<Command> &command) {
 	static int cardPos = 0;
+	static CardContainer * cardSource = nullptr;
+
 	if (command->getType().compare("Play") == 0) {
 		if (command->getArg() < 0 || command->getArg() >= hand->getNumberOfCards()) throw Command::WrongCommandException(command);
 		if (pickedCard != nullptr) throw Command::WrongCommandException(command);
 		pickedCard = hand->getCard(command->getArg());
 		cardPos = command->getArg();
+		cardSource = hand.get();
+
+		if (pickedCard->getTag(CardTag::noTarget)) {
+			game->playCard(pickedCard, -1, cardPos);
+			pickedCard = nullptr;
+			cardSource = nullptr;
+		}
+	}
+	if (command->getType().compare("Pick") == 0) {
+		if (command->getArg() < 0 || command->getArg() > board->getNumberOfCards()) throw Command::WrongCommandException(command);
+		if (pickedCard != nullptr) throw Command::WrongCommandException(command);
+		pickedCard = board->getCard(command->getArg());
+		cardPos = command->getArg();
+		cardSource = board.get();
 	}
 	if (command->getType().compare("Target") == 0) {
-		if (command->getArg() < 0 || command->getArg() >= board->getNumberOfCards()+1) throw Command::WrongCommandException(command);
-		if (pickedCard == nullptr) throw Command::WrongCommandException(command);
-		game->playCard(pickedCard, command->getArg(), cardPos);
-		pickedCard = nullptr;
+		if (cardSource == hand.get()) {
+			if (command->getArg() < 0 || command->getArg() >= board->getNumberOfCards() + 1) throw Command::WrongCommandException(command);
+			if (pickedCard == nullptr) throw Command::WrongCommandException(command);
+			game->playCard(pickedCard, command->getArg(), cardPos);
+			pickedCard = nullptr;
+			cardSource = nullptr;
+		}
+		else if (cardSource == board.get()) {
+			if (command->getArg2() < 0 || command->getArg2() > 3) throw Command::WrongCommandException(command);
+			Card * target = game->getCardByIds(command->getArg(), command->getArg2(), *this);
+			if (target == nullptr) throw Command::WrongCommandException(command);
+			game->minionAttack(pickedCard, target);
+		}
 	}
 }
 

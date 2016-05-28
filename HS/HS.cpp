@@ -76,6 +76,11 @@ int main()
 		}
 	}
 
+	int8_t flags = game->getGameFlags();
+	if ((flags & 1) && (flags & 2)) { cout << "The game ended in a draw."; }
+	else { cout << "Player " << (flags%2+1) << " won."; }
+	cout << endl;
+
 	system("pause");
 	return 0;
 }

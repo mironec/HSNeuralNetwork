@@ -5,7 +5,9 @@
 enum class CardTag {
 	minion = 1 << 0,
 	spell = 1 << 1,
-	beast = 1 << 2
+	beast = 1 << 2,
+	noTarget = 1 << 3,
+	hero = 1 << 4
 };
 
 CardTag operator|(CardTag a, CardTag b);

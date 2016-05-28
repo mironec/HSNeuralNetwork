@@ -1,15 +1,15 @@
 #pragma once
 #include <cstdint>
 #include "HeroType.h"
-#include "Damagable.h"
+#include "Card.h"
+#include "CardType.h"
 
-class Hero : public Damagable
+class Hero : public Card
 {
 private:
 	HeroType * heroType;
 public:
 	Hero(HeroType*);
 	~Hero();
-	void takeDamage(int32_t howMuch);
 };
 

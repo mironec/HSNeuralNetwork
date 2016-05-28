@@ -16,7 +16,8 @@ protected:
 	};
 	CardNode * cards;
 	CardNode * endCards;
-	int8_t numCards;
+	int32_t numCards;
+	Card * removeCard(CardNode * cardNode);
 public:
 	class CardIndexOutOfBoundsException : public std::exception {
 
@@ -29,10 +30,12 @@ public:
 	virtual bool checkAdding(Card * card) = 0;
 
 	void addCardToEnd(Card * card);
-	void addCard(Card * card, int8_t pos = 0);
-	Card * removeCard(int8_t pos);
-	Card * getCard(int8_t pos);
+	void addCard(Card * card, int32_t pos = 0);
+	void addCardInternal(Card * card, int32_t pos = 0);
+	Card * removeCard(int32_t pos);
+	Card * removeCard(Card * card);
+	Card * getCard(int32_t pos);
 	std::vector<Card*> getCards();
-	int8_t getNumberOfCards();
+	int32_t getNumberOfCards();
 };
 

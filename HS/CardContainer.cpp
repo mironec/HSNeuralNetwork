@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "CardContainer.h"
 
-
 CardContainer::CardContainer()
 {
 	cards = nullptr;
@@ -16,27 +15,17 @@ CardContainer::~CardContainer()
 
 void CardContainer::addCardToEnd(Card * card)
 {
-	if (!checkAdding(card)) throw CardContainerFullException();
-	CardNode * newCardNode = new CardNode();
-	newCardNode->card = card;
-	newCardNode->next = nullptr;
-	newCardNode->prev = endCards;
-
-	if (endCards == nullptr) {
-		cards = newCardNode;
-	}
-	else {
-		endCards->next = newCardNode;
-	}
-
-	endCards = newCardNode;
-	numCards++;
+	addCardInternal(card, numCards);
 }
 
-void CardContainer::addCard(Card * card, int8_t pos)
+void CardContainer::addCard(Card * card, int32_t position) {
+	addCardInternal(card, position);
+}
+
+void CardContainer::addCardInternal(Card * card, int32_t position)
 {
 	if (!checkAdding(card)) throw CardContainerFullException();
-	if (pos >= numCards+1 || pos < 0) throw CardIndexOutOfBoundsException();
+	if (position > numCards || position < 0) throw CardIndexOutOfBoundsException();
 
 	CardNode * newCardNode = new CardNode();
 	newCardNode->card = card;
@@ -44,12 +33,21 @@ void CardContainer::addCard(Card * card, int8_t pos)
 	newCardNode->prev = nullptr;
 
 	CardNode * current = cards;
-	for (int i = 0;i < pos;i++) {
-		current = current->next;
+	if (position == numCards) current = endCards;
+	else {
+		for (int i = 0;i < position;i++) {
+			current = current->next;
+		}
 	}
 
 	if (current == nullptr) {			//Adding to the end of the list
-		addCardToEnd(card);
+		if (endCards == nullptr)
+			cards = newCardNode;
+		else
+			endCards->next = newCardNode;
+		newCardNode->prev = endCards;
+		endCards = newCardNode;
+		numCards++;
 		return;
 	}
 	if (current->prev == nullptr) {		//Adding to the front of the list
@@ -67,7 +65,21 @@ void CardContainer::addCard(Card * card, int8_t pos)
 	numCards++;
 }
 
-Card * CardContainer::removeCard(int8_t pos)
+Card * CardContainer::removeCard(CardNode * cardNode)
+{
+	Card * toReturn = cardNode->card;
+	if (cardNode->prev != nullptr) cardNode->prev->next = cardNode->next;
+	else cards = cardNode->next;
+	if (cardNode->next != nullptr) cardNode->next->prev = cardNode->prev;
+	else endCards = cardNode->prev;
+	numCards--;
+
+	delete cardNode;
+
+	return toReturn;
+}
+
+Card * CardContainer::removeCard(int32_t pos)
 {
 	if (pos >= numCards || pos < 0) throw CardIndexOutOfBoundsException();
 
@@ -77,19 +89,24 @@ Card * CardContainer::removeCard(int8_t pos)
 		current = current->next;
 	}
 
-	Card * toReturn = current->card;
-	if (current->prev != nullptr) current->prev->next = current->next;
-	else cards = current->next;
-	if (current->next != nullptr) current->next->prev = current->prev;
-	else endCards = current->prev;
-	numCards--;
-
-	delete current;
-
-	return toReturn;
+	return removeCard(current);
 }
 
-Card * CardContainer::getCard(int8_t pos)
+Card * CardContainer::removeCard(Card * card)
+{
+	CardNode * current = cards;
+
+	while (current != nullptr) {
+		if (current->card == card) break;
+		current = current->next;
+	}
+
+	if (current == nullptr) throw CardIndexOutOfBoundsException();
+
+	return removeCard(current);
+}
+
+Card * CardContainer::getCard(int32_t pos)
 {
 	if (pos >= numCards || pos < 0) throw CardIndexOutOfBoundsException();
 
@@ -111,11 +128,11 @@ std::vector<Card*> CardContainer::getCards()
 		v.push_back(current->card);
 		current = current->next;
 	}
-	
+
 	return v;
 }
 
-int8_t CardContainer::getNumberOfCards()
+int32_t CardContainer::getNumberOfCards()
 {
 	return numCards;
 }

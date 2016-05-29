@@ -1,6 +1,10 @@
 #include "stdafx.h"
 #include "CardType.h"
 
+CardType::CardType()
+{
+}
+
 CardType::CardType(int32_t attack, int32_t health, std::string name, int32_t manaCost):
 	attack(attack), health(health), name(name), manaCost(manaCost)
 {
@@ -45,6 +49,10 @@ void CardType::setTags(CardTag tags)
 CardTag CardType::getTags()
 {
 	return tags;
+}
+
+bool CardType::getTag(CardTag flag) {
+	return (tags & flag) != 0;
 }
 
 CardTag operator~(CardTag a)

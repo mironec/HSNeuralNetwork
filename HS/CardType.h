@@ -27,6 +27,7 @@ private:
 
 	std::string name;
 public:
+	CardType();
 	CardType(int32_t attack, int32_t health, std::string, int32_t manaCost);
 	~CardType();
 	int32_t getAttack();
@@ -37,4 +38,5 @@ public:
 	void setTag(CardTag tag, bool value);
 	void setTags(CardTag tags);
 	CardTag getTags();
+	bool getTag(CardTag flag);
 };

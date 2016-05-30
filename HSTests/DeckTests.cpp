@@ -2,6 +2,7 @@
 #include "Catch.hpp"
 #include "..\HS\Deck.h"
 #include "..\HS\Card.h"
+#include <vector>
 
 TEST_CASE("Deck drawing tests", "[Deck]") {
 	Deck * d = new Deck();
@@ -41,11 +42,13 @@ TEST_CASE("Deck drawing tests", "[Deck]") {
 		}
 	}
 
-	SECTION("Deck with 5 cards can be drawn exactly 5 times.") {
-		Card * c = new Card();
-		for (int i = 0;i < 5;i++) d->addCardToEnd(c);
+	SECTION("Deck with 5 cards can be drawn exactly 5 times and returns those 5 cards.") {
+		std::vector<std::unique_ptr<Card>> cards; int j = 0; cards.resize(5);
+		std::vector<Card*> drawnCards; drawnCards.resize(5);
+		for (int i = 0;i < 5;i++) d->addCardToEnd( (cards[j++] = std::make_unique<Card>()).get() );
+		j = 0;
 
-		for (int i = 0;i < 5;i++) d->drawRandomCard(rand);
+		for (int i = 0;i < 5;i++) drawnCards[j++] = d->drawRandomCard(rand);
 
 		bool thrown = false;
 		try {
@@ -57,6 +60,21 @@ TEST_CASE("Deck drawing tests", "[Deck]") {
 		}
 
 		REQUIRE(thrown);
+
+		bool same = true;
+		for (int i = 0;i < 5;i++) {
+			Card* c = cards[i].get();
+			bool sameThis = false;
+			for (int j = 0;j < 5;j++) {
+				if (drawnCards[j] == c) {
+					if (!sameThis) sameThis = true;
+					else { sameThis = false; break; }
+				}
+			}
+			if (!sameThis) same = false;
+		}
+
+		REQUIRE(same);
 	}
 
 	SECTION("Deck with one card added and removed repeatedly behaves normally.") {
@@ -64,7 +82,7 @@ TEST_CASE("Deck drawing tests", "[Deck]") {
 			Card * c = new Card();
 			d->addCardToEnd(c);
 			REQUIRE(c == d->drawRandomCard(rand));
-			
+
 			bool thrown = false;
 			try {
 				d->drawRandomCard(rand);

@@ -245,7 +245,7 @@ ModelManifest.xml
 .fake/
 
 #HSTests
-HSTests/
+HSTestsOld/
 HSTests2/
 HSTests3/
 HSTests4/

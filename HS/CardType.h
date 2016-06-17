@@ -2,7 +2,7 @@
 #include <cstdint>
 #include <string>
 
-enum class CardTag {
+enum class CardTag : int32_t {
 	minion = 1 << 0,
 	spell = 1 << 1,
 	beast = 1 << 2,
@@ -13,8 +13,8 @@ enum class CardTag {
 CardTag operator|(CardTag a, CardTag b);
 CardTag operator&(CardTag a, CardTag b);
 CardTag operator~(CardTag a);
-bool operator==(CardTag a, unsigned int b);
-bool operator!=(CardTag a, unsigned int b);
+bool operator==(CardTag a, int32_t b);
+bool operator!=(CardTag a, int32_t b);
 
 class CardType
 {

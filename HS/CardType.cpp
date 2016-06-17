@@ -57,25 +57,25 @@ bool CardType::getTag(CardTag flag) {
 
 CardTag operator~(CardTag a)
 {
-	return static_cast<CardTag>(~static_cast<int>(a));
+	return static_cast<CardTag>(~static_cast<int32_t>(a));
 }
 
 CardTag operator|(CardTag a, CardTag b)
 {
-	return static_cast<CardTag>(static_cast<int>(a) | static_cast<int>(b));
+	return static_cast<CardTag>(static_cast<int32_t>(a) | static_cast<int32_t>(b));
 }
 
 CardTag operator&(CardTag a, CardTag b)
 {
-	return static_cast<CardTag>(static_cast<int>(a) & static_cast<int>(b));
+	return static_cast<CardTag>(static_cast<int32_t>(a) & static_cast<int32_t>(b));
 }
 
-bool operator==(CardTag a, unsigned int b)
+bool operator==(CardTag a, int32_t b)
 {
-	return static_cast<int>(a)==b;
+	return static_cast<int32_t>(a)==b;
 }
 
-bool operator!=(CardTag a, unsigned int b)
+bool operator!=(CardTag a, int32_t b)
 {
-	return static_cast<int>(a)!=b;
+	return static_cast<int32_t>(a)!=b;
 }
